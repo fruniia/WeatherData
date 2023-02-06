@@ -6,6 +6,7 @@
         {
             Console.WriteLine("Hello, World!");
             Console.WriteLine("Hej");
+            Console.WriteLine("Very good weather");
         }
     }
 }

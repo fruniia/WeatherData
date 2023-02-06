@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace WeatherData.Model
 {
-    internal class Inside
+    internal class Inside : Location
     {
+        public DateTime Date { get; set; }
+        public string Location { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
     }
 }

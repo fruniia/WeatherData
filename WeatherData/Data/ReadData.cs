@@ -8,5 +8,6 @@ namespace WeatherData.Data
 {
     internal class ReadData
     {
+        
     }
 }

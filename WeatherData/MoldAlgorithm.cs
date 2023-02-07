@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WeatherData
 {
-    internal class MouldAlgorithm
+    internal class MoldAlgorithm
     {
     }
 }

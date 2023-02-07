@@ -19,7 +19,7 @@ namespace WeatherData.Data
             return temporaryFileList;
         }
 
-        public static List<string> GetFileDate()
+        public static List<string> GetSelectedData()
         {
             List<string> files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "Data").ToList();
             List<string> filenames = new();
@@ -30,6 +30,10 @@ namespace WeatherData.Data
             int index = Menu.MenuList("Choose file", 0, filenames);
 
             return ReadDataFromTextFile(files[index]);
+        }
+        public static List<string> GetSensorData()
+        {
+            return ReadDataFromTextFile(AppDomain.CurrentDomain.BaseDirectory + "SensorData\\sensorData.txt");
         }
     }
 }

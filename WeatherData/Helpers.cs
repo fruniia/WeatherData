@@ -20,9 +20,9 @@ namespace WeatherData
             return result;
         }
 
-        internal static List<string> GetSelectedData(string regex)
-        { 
+        //internal static List<string> GetSelectedData(string regex)
+        //{ 
            
-        }
+        //}
     }
 }

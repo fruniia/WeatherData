@@ -14,7 +14,7 @@ namespace WeatherData
                 "Create User",
                 "Exit"
             };
-            mainMenuText = ReadData.GetFileDate();
+            mainMenuText = ReadData.GetSensorData();
           
             Menu.MenuList("Test", 1, mainMenuText);
 

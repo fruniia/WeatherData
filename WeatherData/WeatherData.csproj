@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bin\Debug\net6.0\Data\tempdata5-med fel.txt" />
+    <None Include="bin\Debug\net6.0\SensorData\sensorData.txt" />
   </ItemGroup>
 
 </Project>

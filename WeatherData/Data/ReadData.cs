@@ -27,7 +27,7 @@ namespace WeatherData.Data
             {
                 filenames.Add(Path.GetFileName(files[i]));
             }
-            int index = Menu.MenuList("Choose file", 0, filenames);
+            int index = Menu.MenuList("Choose file", 0, filenames, false);
 
             return ReadDataFromTextFile(files[index]);
         }

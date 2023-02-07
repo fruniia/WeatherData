@@ -8,15 +8,17 @@ namespace WeatherData
         {
 
 
-            List<string> mainMenuText = new()
-            {
-                "Login",
-                "Create User",
-                "Exit"
-            };
-            mainMenuText = ReadData.GetSensorData();
-          
-            Menu.MenuList("Test", 1, mainMenuText);
+            //List<string> mainMenuText = new()
+            //{
+            //    "Login",
+            //    "Create User",
+            //    "Exit"
+            //};
+            //mainMenuText = ReadData.GetSensorData();
+
+            //Menu.MenuList("Test", 1, mainMenuText, false);
+
+            Menu.SelectDate();
 
 
         }

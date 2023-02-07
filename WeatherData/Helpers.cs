@@ -19,10 +19,25 @@ namespace WeatherData
             }
             return result;
         }
+        internal static List<DateTime> GetDates(int month, int year = 2016)
+        {
+            return Enumerable.Range(1, DateTime.DaysInMonth(year, month))
+                             .Select(day => new DateTime(year, month, day))
+                             .ToList();
+        }
+        internal static List<string> FormatDates(List<DateTime> dates)
+        {
+            List<string> formattedDates = new();
+            for (int i = 0; i < dates.Count; i++)
+            {
+                formattedDates.Add(dates[i].DayOfWeek.ToString().PadRight(10) + ": " + dates[i].ToString("yyyy/MM/dd"));
+            }
+            return formattedDates;
+        }
 
         //internal static List<string> GetSelectedData(string regex)
         //{ 
-           
+
         //}
     }
 }

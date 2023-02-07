@@ -20,7 +20,7 @@ namespace WeatherData
                 Console.ResetColor();
             }
         }
-
+        
         internal static void PrintText(string output)
         {
             Console.Clear();

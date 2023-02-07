@@ -8,6 +8,9 @@ namespace WeatherData
 {
     internal class Regex
     {
+        string regex = "^(?<Date>\\b2016\\b-\\d{2}-\\d{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$"; //RÖR EJ
+        
+        string regexTest = "^(?<Date>\\b2016\\b-[monthInput]{2}-[dayInput]{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
         public enum RegexMatch
         { 
             Inside,

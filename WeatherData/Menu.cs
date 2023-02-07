@@ -40,8 +40,11 @@ namespace WeatherData
                 if (dayIndex == -2 && month < 12) month++;
                 else if (dayIndex == -3 && month > 6 && month > 1) month--;
                 else if (dayIndex == -1) return;
+                else if (dayIndex >= 0) Helpers.CompareSelectedDateWithRegex(dayList[dayIndex]);
                 dayList = Helpers.GetDates(month);
             }
+            
         }
+
     }
 }

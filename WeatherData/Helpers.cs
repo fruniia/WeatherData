@@ -35,6 +35,19 @@ namespace WeatherData
             return formattedDates;
         }
 
+        internal static void CompareSelectedDateWithRegex(DateTime date)
+        {
+            string pattern = Regex.GetPattern(ReturnFormattedDate(date.Month.ToString()), ReturnFormattedDate(date.Day.ToString()));
+            Console.WriteLine(pattern);
+            Console.ReadLine();
+
+        }
+
+        internal static string ReturnFormattedDate(string date)
+        {
+            if (date.Length == 1) return "0" + date;
+            return date;
+        }
         //internal static List<string> GetSelectedData(string regex)
         //{ 
 

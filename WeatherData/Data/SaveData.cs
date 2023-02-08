@@ -8,11 +8,7 @@ namespace WeatherData.Data
 {
     internal class SaveData
     {
-        //Medeltemperatur ute och inne, per månad
-        //Medelluftfuktighet inne och ute, per månad
-        //Medelmögelrisk inne och ute, per månad.
-        //Datum för höst och vinter 2016 (om något av detta inte inträffar, ange när det var som närmast)
-        //Skriv ut algoritmen för mögel
+        
 
         private static void SaveToTextFile(List<string> templist, string filename)
         {

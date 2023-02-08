@@ -18,7 +18,8 @@ namespace WeatherData
 
             //Menu.MenuList("Test", 1, mainMenuText, false);
 
-            Menu.SelectMonth();
+            Menu.SelectDay();
+            //Menu.SelectMonth();
             
 
 

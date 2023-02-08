@@ -66,6 +66,10 @@ namespace WeatherData
             List<string> matches = Helpers.GetSelectedDateWithRegex(pattern);
             List<double> temperaturePerDay = Helpers.GetDivideDataTempPerLocation(matches, pattern);
 
+            foreach (double temp in temperaturePerDay)
+            {
+                Console.WriteLine(temp.ToString("0.00"));
+            }
 
         }
 

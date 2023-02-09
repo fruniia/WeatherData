@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WeatherData.Data;
+using WeatherData.Models;
 
 namespace WeatherData
 {
@@ -108,7 +109,7 @@ namespace WeatherData
             foreach (string data in listData)
             {
                 Match match = pattern.Match(data);
-                if (match.Success) 
+                if (match.Success)
                     temp += double.Parse((match.Groups["Temp"].Value).ToString(), System.Globalization.CultureInfo.InvariantCulture);
             }
             return temp / (double)listData.Count;
@@ -119,11 +120,23 @@ namespace WeatherData
             if (date.Length == 1) return "0" + date;
             return date;
         }
-
-        
-        //internal static List<string> GetSelectedData(string regex)
-        //{ 
-
+        //internal static List<DateTime> GetDatesPerMonth(int month, int year = 2016)
+        //{
+        //    return Enumerable.Range(1, DateTime.DaysInMonth(year, month))
+        //                     .Select(day => new DateTime(year, month, day))
+        //                     .ToList();
         //}
+
+        internal static List<DateTime> GetDatesPerMonthFromSensorData(int month, List<SensorDataTime> sensorData, int year = 2016)
+        {
+            List<DateTime> dates = new List<DateTime>();
+            foreach (var data in sensorData)
+            {
+                if(data.Date.Year == year && data.Date.Month == month)
+                dates.Add(data.Date);
+            }
+            return dates;
+        }
+
     }
 }

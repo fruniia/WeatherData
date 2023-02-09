@@ -11,12 +11,14 @@ namespace WeatherData
     {
 
         //string regexTest = "^(?<Date>\\b2016\\b-[monthInput]{2}-[dayInput]{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
-        //string regexPattern = "^(?<Date>\\b2016\\b-\\d{2}-\\d{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$"; //RÖR EJ
-
-
+        //string regexPattern =@"^(?<Date>\b2016\b-((0)[0-9]|(1)[1-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$"; //RÖR EJ
+        internal static string GetPatternForWholeList()
+        {
+            return @"^(?<Date>\b2016\b-((0)[0-9]|(1)[1-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$";
+        }
         internal static string GetPattern(string month, string day)
         {
-            return "^(?<Date>\\b2016\\b-" + $"[{month}]" + "{2}-" + $"[{day}]" + "{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
+            return " ^ (?<Date>\\b2016\\b-" + $"[{month}]" + "{2}-" + $"[{day}]" + "{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
 
         }
         internal static List<string> GetMatchValue(string pattern, List<string> sensorData)
@@ -31,7 +33,6 @@ namespace WeatherData
                 {
                     result.Add(matches[0].ToString());
                 }
-
             }
             return result;
         }

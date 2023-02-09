@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WeatherData.Data;
+using WeatherData.Models;
 
 namespace WeatherData
 {
@@ -32,20 +34,25 @@ namespace WeatherData
             return index;
 
         }
-        internal static DateTime SelectDateDay()
+        internal static DateTime SelectDateDay(List<SensorDataTime> sensorData)
         {
             int month = 6;
-            List<DateTime> dayList = Helpers.GetDatesPerMonth(month);
-            while (true)
-            {
-                int dayIndex = Menu.MenuList("Pick a Date", 0, Helpers.FormatDates(dayList), true);
-                if (dayIndex == -2 && month < 12) month++;
-                else if (dayIndex == -3 && month > 6 && month > 1) month--;
-                //else if (dayIndex == -1) return;
-                else if (dayIndex >= 0) return (dayList[dayIndex]);
-                dayList = Helpers.GetDatesPerMonth(month);
-            }
-            
+
+            //List<DateTime> dayList = Helpers.GetDatesPerMonth(month);
+            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);
+            dayList.ForEach(x => Console.WriteLine(x));
+            Console.ReadLine();
+            //while (true)
+            //{
+            //    int dayIndex = Menu.MenuList("Pick a Date", 0, Helpers.FormatDates(dayList), true);
+            //    if (dayIndex == -2 && month < 12) month++;
+            //    else if (dayIndex == -3 && month > 6 && month > 1) month--;
+            //    else if (dayIndex == -1) return;
+            //    else if (dayIndex >= 0) return (dayList[dayIndex]);
+            //    dayList = Helpers.GetDatesPerMonth(month);
+            //}
+            return DateTime.Today;
+
         }
 
         internal static DateTime SelectDateMonth()
@@ -61,7 +68,8 @@ namespace WeatherData
 
         internal static void SelectDay()
         {
-            DateTime dateDay = SelectDateDay();
+            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
+            DateTime dateDay = SelectDateDay(sensorData);
             string pattern = RegexHelper.GetPattern(Helpers.ReturnFormattedDate(dateDay.Month.ToString()), Helpers.ReturnFormattedDate(dateDay.Day.ToString()));
             List<string> matches = Helpers.GetSelectedDateWithRegex(pattern);
             List<double> temperaturePerDay = Helpers.GetDivideDataTempPerLocation(matches, pattern);

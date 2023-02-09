@@ -29,6 +29,7 @@ namespace WeatherData.Models
                 {
                     if (match.Success)
                     {
+
                         sensorDataTime.Add(new SensorDataTime
                         {
                             Date = DateTime.ParseExact(match.Groups["Date"].Value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),

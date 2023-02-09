@@ -20,7 +20,9 @@ namespace WeatherData
             //Menu.MenuList("Test", 1, mainMenuText, false);
 
             List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
-            Menu.SelectDay(sensorData);
+            //Menu.SelectDay(sensorData);
+            //Menu.SelectMonth(sensorData);
+            Menu.GetTemperatureForAllMonths(sensorData);
             //Menu.SelectMonth();
 
 

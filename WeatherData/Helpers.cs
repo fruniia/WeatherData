@@ -77,7 +77,7 @@ namespace WeatherData
            
         }
 
-        internal static List<double> GetDivideDataTempPerLocation(List<SensorDataTime> sensorData, string pattern)
+        internal static List<double> GetDivideDataTempPerLocation(List<SensorDataTime> sensorData)
         {
             List<SensorDataTime> insideData = new();
             List<SensorDataTime> outsideData = new();
@@ -90,24 +90,26 @@ namespace WeatherData
                 else
                     outsideData.Add(data);
             }
-            return GetAverageTemperature(insideData, outsideData, pattern);
+            return GetAverageTemperature(insideData, outsideData);
         }
 
-        internal static List<double> GetAverageTemperature(List<SensorDataTime> insideData, List<SensorDataTime> outsideData, string dataPattern)
+        internal static List<double> GetAverageTemperature(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
         {
-            Regex pattern = new Regex(dataPattern);
+            
             List<double> temps = new List<double>();
-            temps.Add(GetAverageTemperatureFromModel(pattern, insideData));
-            temps.Add(GetAverageTemperatureFromModel(pattern, outsideData));
+            temps.Add(GetAverageTemperatureFromModel(18, 30, insideData));
+            temps.Add(GetAverageTemperatureFromModel(-30, 36, outsideData));
             return temps;
         }
 
-        internal static double GetAverageTemperatureFromModel(Regex pattern, List<SensorDataTime> listData)
+        internal static double GetAverageTemperatureFromModel(double minTemp, double maxTemp, List<SensorDataTime> listData)
         {
             double temp = 0.0;
             foreach (SensorDataTime data in listData)
-            {               
-                    temp += double.Parse(data.Temp, System.Globalization.CultureInfo.InvariantCulture);
+            {
+                double temporaryTemp = double.Parse(data.Temp, System.Globalization.CultureInfo.InvariantCulture);
+                if (temporaryTemp > minTemp && temporaryTemp < maxTemp)
+                    temp += temporaryTemp;
             }
             return temp / (double)listData.Count;
         }
@@ -132,5 +134,13 @@ namespace WeatherData
             return dates;
         }
 
+        internal static List<SensorDataTime> GetSelectedDateData(DateTime dateDay, List<SensorDataTime> sensorData)
+        {
+            List<SensorDataTime> matches = new();
+            foreach (var data in sensorData)
+                if (data.Date.Year == dateDay.Year && data.Date.Month == dateDay.Month && data.Date.Day == dateDay.Day)
+                    matches.Add(data);
+            return matches;
+        }
     }
 }

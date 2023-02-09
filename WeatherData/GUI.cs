@@ -10,6 +10,8 @@ namespace WeatherData
     {
         internal static void PrintMenu(string header, int positionX, int positionY, int index, List<string> options)
         {
+            Console.SetCursorPosition(positionX, positionY -1);
+            Console.WriteLine(header);
             for (int y = 0; y < options.Count; y++)
             {
                 Console.SetCursorPosition(positionX, positionY + y);

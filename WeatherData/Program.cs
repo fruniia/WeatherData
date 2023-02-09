@@ -1,4 +1,5 @@
 ﻿using WeatherData.Data;
+using WeatherData.Models;
 
 namespace WeatherData
 {
@@ -18,9 +19,10 @@ namespace WeatherData
 
             //Menu.MenuList("Test", 1, mainMenuText, false);
 
-            Menu.SelectDay();
+            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
+            Menu.SelectDay(sensorData);
             //Menu.SelectMonth();
-            
+
 
 
         }

@@ -71,20 +71,19 @@ namespace WeatherData
             ◦ Sortering av minst till störst risk av mögel
                      */
 
-        internal static List<string> GetSelectedDateWithRegex(string pattern)
+        internal static List<SensorDataTime> GetSelectedDateWithRegex(string pattern, List<SensorDataTime> sensorData)
         {
-            List<string> sensorData = ReadData.GetSensorData();
-            List<string> matches = RegexHelper.GetMatchValue(pattern, sensorData);
-            return matches;
+           return RegexHelper.GetMatchValue(pattern, sensorData);
+           
         }
 
-        internal static List<double> GetDivideDataTempPerLocation(List<string> sensorData, string pattern)
+        internal static List<double> GetDivideDataTempPerLocation(List<SensorDataTime> sensorData, string pattern)
         {
-            List<string> insideData = new();
-            List<string> outsideData = new();
-            foreach (string data in sensorData)
+            List<SensorDataTime> insideData = new();
+            List<SensorDataTime> outsideData = new();
+            foreach (SensorDataTime data in sensorData)
             {
-                if (data.Contains("Inne"))
+                if (data.Location == ("Inside"))
 
                     insideData.Add(data);
 
@@ -94,23 +93,21 @@ namespace WeatherData
             return GetAverageTemperature(insideData, outsideData, pattern);
         }
 
-        internal static List<double> GetAverageTemperature(List<string> insideData, List<string> outsideData, string dataPattern)
+        internal static List<double> GetAverageTemperature(List<SensorDataTime> insideData, List<SensorDataTime> outsideData, string dataPattern)
         {
             Regex pattern = new Regex(dataPattern);
             List<double> temps = new List<double>();
-            temps.Add(GetAverageTemperatureFromList(pattern, insideData));
-            temps.Add(GetAverageTemperatureFromList(pattern, outsideData));
+            temps.Add(GetAverageTemperatureFromModel(pattern, insideData));
+            temps.Add(GetAverageTemperatureFromModel(pattern, outsideData));
             return temps;
         }
 
-        internal static double GetAverageTemperatureFromList(Regex pattern, List<string> listData)
+        internal static double GetAverageTemperatureFromModel(Regex pattern, List<SensorDataTime> listData)
         {
             double temp = 0.0;
-            foreach (string data in listData)
-            {
-                Match match = pattern.Match(data);
-                if (match.Success)
-                    temp += double.Parse((match.Groups["Temp"].Value).ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            foreach (SensorDataTime data in listData)
+            {               
+                    temp += double.Parse(data.Temp, System.Globalization.CultureInfo.InvariantCulture);
             }
             return temp / (double)listData.Count;
         }
@@ -120,20 +117,17 @@ namespace WeatherData
             if (date.Length == 1) return "0" + date;
             return date;
         }
-        //internal static List<DateTime> GetDatesPerMonth(int month, int year = 2016)
-        //{
-        //    return Enumerable.Range(1, DateTime.DaysInMonth(year, month))
-        //                     .Select(day => new DateTime(year, month, day))
-        //                     .ToList();
-        //}
 
         internal static List<DateTime> GetDatesPerMonthFromSensorData(int month, List<SensorDataTime> sensorData, int year = 2016)
         {
             List<DateTime> dates = new List<DateTime>();
-            foreach (var data in sensorData)
+            foreach (var data in sensorData.Select(x => x.Date).Distinct())
             {
-                if(data.Date.Year == year && data.Date.Month == month)
-                dates.Add(data.Date);
+                if (data.Date.Year == year && data.Date.Month == month)
+                {
+                    //data.Date.Day
+                    dates.Add(data.Date);
+                }
             }
             return dates;
         }

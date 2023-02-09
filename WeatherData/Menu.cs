@@ -37,20 +37,18 @@ namespace WeatherData
         internal static DateTime SelectDateDay(List<SensorDataTime> sensorData)
         {
             int month = 6;
-
-            //List<DateTime> dayList = Helpers.GetDatesPerMonth(month);
-            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);
-            dayList.ForEach(x => Console.WriteLine(x));
-            Console.ReadLine();
-            //while (true)
-            //{
-            //    int dayIndex = Menu.MenuList("Pick a Date", 0, Helpers.FormatDates(dayList), true);
-            //    if (dayIndex == -2 && month < 12) month++;
-            //    else if (dayIndex == -3 && month > 6 && month > 1) month--;
-            //    else if (dayIndex == -1) return;
-            //    else if (dayIndex >= 0) return (dayList[dayIndex]);
-            //    dayList = Helpers.GetDatesPerMonth(month);
-            //}
+         
+            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);          
+            while (true)
+            {
+                Console.Clear();
+                int dayIndex = Menu.MenuList(DateTimeFormatInfo.CurrentInfo.GetMonthName(month), 0, Helpers.FormatDates(dayList), true);
+                if (dayIndex == -2 && month < 12) month++;
+                else if (dayIndex == -3 && month > 6 && month > 1) month--;
+                //else if (dayIndex == -1) return;
+                else if (dayIndex >= 0) return (dayList[dayIndex]);
+                dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);
+            }
             return DateTime.Today;
 
         }
@@ -66,12 +64,11 @@ namespace WeatherData
             }
         }
 
-        internal static void SelectDay()
+        internal static void SelectDay(List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
             DateTime dateDay = SelectDateDay(sensorData);
             string pattern = RegexHelper.GetPattern(Helpers.ReturnFormattedDate(dateDay.Month.ToString()), Helpers.ReturnFormattedDate(dateDay.Day.ToString()));
-            List<string> matches = Helpers.GetSelectedDateWithRegex(pattern);
+            List<SensorDataTime> matches = Helpers.GetSelectedDateWithRegex(pattern, sensorData);
             List<double> temperaturePerDay = Helpers.GetDivideDataTempPerLocation(matches, pattern);
 
             foreach (double temp in temperaturePerDay)
@@ -81,40 +78,40 @@ namespace WeatherData
 
         }
 
-        internal static void SelectMonth()
-        {
-            DateTime date = SelectDateMonth();
-            List<double> avgTemperaturePerMonth = new();
-            avgTemperaturePerMonth.Add(0.0);
-            avgTemperaturePerMonth.Add(0.0);
-            int insideCounting = 0;
-            int outsideCounting = 0;
+        //internal static void SelectMonth()
+        //{
+        //    DateTime date = SelectDateMonth();
+        //    List<double> avgTemperaturePerMonth = new();
+        //    avgTemperaturePerMonth.Add(0.0);
+        //    avgTemperaturePerMonth.Add(0.0);
+        //    int insideCounting = 0;
+        //    int outsideCounting = 0;
 
-            for (int i = 1; i <= DateTime.DaysInMonth(date.Year, date.Month); i++)
-            {
-                string pattern = RegexHelper.GetPattern(Helpers.ReturnFormattedDate(date.Month.ToString()), Helpers.ReturnFormattedDate(i.ToString()));
-                List<string> matches = Helpers.GetSelectedDateWithRegex(pattern);
-                List<double> avgTemperaturePerDay = Helpers.GetDivideDataTempPerLocation(matches, pattern);
+        //    for (int i = 1; i <= DateTime.DaysInMonth(date.Year, date.Month); i++)
+        //    {
+        //        string pattern = RegexHelper.GetPattern(Helpers.ReturnFormattedDate(date.Month.ToString()), Helpers.ReturnFormattedDate(i.ToString()));
+        //        List<string> matches = Helpers.GetSelectedDateWithRegex(pattern,);
+        //        List<double> avgTemperaturePerDay = Helpers.GetDivideDataTempPerLocation(matches, pattern);
 
-                if (avgTemperaturePerDay[0] !> 0)
-                {
-                    avgTemperaturePerMonth[0] += (avgTemperaturePerDay[0]);
-                    insideCounting++;
-                }
+        //        if (avgTemperaturePerDay[0] !> 0)
+        //        {
+        //            avgTemperaturePerMonth[0] += (avgTemperaturePerDay[0]);
+        //            insideCounting++;
+        //        }
 
-                if (avgTemperaturePerDay[1] !> 0)
-                {
-                    avgTemperaturePerMonth[1] += (avgTemperaturePerDay[1]);
-                    outsideCounting++;
-                }
-            }
-            avgTemperaturePerMonth[0] = avgTemperaturePerMonth[0] / insideCounting;
-            avgTemperaturePerMonth[1] = avgTemperaturePerMonth[1] / outsideCounting;
+        //        if (avgTemperaturePerDay[1] !> 0)
+        //        {
+        //            avgTemperaturePerMonth[1] += (avgTemperaturePerDay[1]);
+        //            outsideCounting++;
+        //        }
+        //    }
+        //    avgTemperaturePerMonth[0] = avgTemperaturePerMonth[0] / insideCounting;
+        //    avgTemperaturePerMonth[1] = avgTemperaturePerMonth[1] / outsideCounting;
 
-            foreach(double temp in avgTemperaturePerMonth)
-            {
-                Console.WriteLine(temp.ToString("0.00"));
-            }
-        }
+        //    foreach(double temp in avgTemperaturePerMonth)
+        //    {
+        //        Console.WriteLine(temp.ToString("0.00"));
+        //    }
+        //}
     }
 }

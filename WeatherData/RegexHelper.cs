@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WeatherData.Models;
 
 namespace WeatherData
 {
@@ -11,27 +12,28 @@ namespace WeatherData
     {
 
         //string regexTest = "^(?<Date>\\b2016\\b-[monthInput]{2}-[dayInput]{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
-        //string regexPattern =@"^(?<Date>\b2016\b-((0)[0-9]|(1)[1-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$"; //RÖR EJ
+        //string regexPattern =@"^(?<Date>\b2016\b-((0)[0-9]|(1)[0-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$"; //RÖR EJ
         internal static string GetPatternForWholeList()
         {
-            return @"^(?<Date>\b2016\b-((0)[0-9]|(1)[1-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$";
+            return @"^(?<Date>\b2016\b-((0)[0-9]|(1)[0-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$";
         }
         internal static string GetPattern(string month, string day)
         {
-            return " ^ (?<Date>\\b2016\\b-" + $"[{month}]" + "{2}-" + $"[{day}]" + "{2})\\s.{8},\\b(?<Location>Inne|Ute)\\b,(?<Temp>-?\\d{1,2}.\\d),(?<Humidity>\\d{2})$";
+            return $"^{day}/{month}/2016$";
+            //return "^(?<Date>\\b-" + $"[{day}]" + "{2}-" + $"[{month}]" + "{2}\\b2016)$";
 
         }
-        internal static List<string> GetMatchValue(string pattern, List<string> sensorData)
+        internal static List<SensorDataTime> GetMatchValue(string pattern, List<SensorDataTime> sensorData)
         {
-            List<string> result = new List<string>();
+            List<SensorDataTime> result = new List<SensorDataTime>();
             Regex regex = new Regex(pattern);
 
             foreach (var data in sensorData)
             {
-                MatchCollection matches = regex.Matches(data);
+                MatchCollection matches = regex.Matches(data.Date.ToString());
                 if (matches.Count != 0)
                 {
-                    result.Add(matches[0].ToString());
+                    result.Add(data);
                 }
             }
             return result;

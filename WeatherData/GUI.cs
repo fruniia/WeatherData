@@ -29,5 +29,17 @@ namespace WeatherData
             Console.WriteLine(output);
             Console.WriteLine();
         }
+
+        internal static void PrintList (string header, List<string> list, bool printNumbers, int positionX, int positionY)
+        {
+            Console.SetCursorPosition(positionX, positionY - 1);
+            Console.WriteLine(header);
+            for (int i = 0; i < list.Count; i++)
+            {
+                Console.SetCursorPosition(positionX, positionY + i);
+                if (printNumbers) Console.Write((i + 1).ToString().PadRight(4));
+                Console.Write(list[i]);
+            }
+        }
     }
 }

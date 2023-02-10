@@ -168,19 +168,6 @@ namespace WeatherData
                 List<SensorDataTime> AvgUnitDataList = Helpers.GetUnitForSelectedMonth(new DateTime(2016, i, 1), sensorData);
                 foreach (SensorDataTime unit in AvgUnitDataList) result.Add(unit);
             }
-
-            //List<string> unitList = new List<string>();
-            //for (int i = 0; i < result.Count; i++)
-            //{
-            //    unitList.Add(insideResult[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + insideResult[i].Location.PadRight(13) + "Temperature: " + insideResult[i].Temp.PadRight(10) + "Humidity: " + insideResult[i].Humidity + " %");
-            //    unitList.Add(outsideResult[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + outsideResult[i].Location.PadRight(13) + "Temperature: " + outsideResult[i].Temp.PadRight(10) + "Humidity: " + outsideResult[i].Humidity + " %");
-            //}
-
-            //foreach (string data in unitList)
-            //{
-            //    Console.WriteLine(data);
-            //}
-
             return result;
         }
     }

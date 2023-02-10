@@ -320,5 +320,45 @@ namespace WeatherData
 
             return locationData;
         }
+
+        internal static List<SensorDataTime> GetSortedListPerTemp(List<SensorDataTime> dataAvgPerDay)
+        {
+            var names = dataAvgPerDay
+                .OrderByDescending(g => double.Parse(g.Temp, System.Globalization.CultureInfo.InvariantCulture))
+                .Select(g => g).Take(5).ToList();
+            return names;
+        }
+
+        internal static List<SensorDataTime> GetSortedListPerTempReverse(List<SensorDataTime> dataAvgPerDay)
+        {
+            var names = dataAvgPerDay
+                .OrderBy(g => double.Parse(g.Temp, System.Globalization.CultureInfo.InvariantCulture))
+                .Select(g => g).Take(5).ToList();
+            return names;
+        }
+
+        internal static List<SensorDataTime> GetSortedListPerHumidity(List<SensorDataTime> dataAvgPerDay)
+        {
+            var names = dataAvgPerDay
+                .OrderByDescending(g => double.Parse(g.Humidity, System.Globalization.CultureInfo.InvariantCulture))
+                .Select(g => g).Take(5).ToList();
+            return names;
+        }
+
+        internal static List<SensorDataTime> GetSortedListPerHumidityReverse(List<SensorDataTime> dataAvgPerDay)
+        {
+            var names = dataAvgPerDay
+                .OrderBy(g => double.Parse(g.Humidity, System.Globalization.CultureInfo.InvariantCulture))
+                .Select(g => g).Take(5).ToList();
+            return names;
+        }
+
+        internal static List<string> ConvertModelListToStringList(List<SensorDataTime> modelList)
+        {
+            List<string> unitList = new List<string>();
+            for (int i = 0; i < modelList.Count; i++)
+                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(13) + "Temperature: " + modelList[i].Temp.PadRight(10) + "Humidity: " + modelList[i].Humidity + " %");
+            return unitList;
+        }
     }
 }

@@ -23,7 +23,6 @@ namespace WeatherData.Data
                 output = "Failed to save data\n\n" + e;
             }
             GUI.PrintText(output);
-
         }
 
         internal static void ProcessListToSave(List<string> templist)

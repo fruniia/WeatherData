@@ -78,7 +78,7 @@ namespace WeatherData
 
 
             //Menu.SelectMonth();
-
+            MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerDay);
 
         }
     }

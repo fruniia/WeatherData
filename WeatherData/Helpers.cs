@@ -144,9 +144,6 @@ namespace WeatherData
             double humidity = 0.0;
             foreach (SensorDataTime data in listData)
             {
-                //Console.WriteLine(data.Humidity);
-                //Console.ReadLine();
-
 
                 double temporaryHumidity = double.Parse(data.Humidity, System.Globalization.CultureInfo.InvariantCulture);
                 if (temporaryHumidity > minHumidity && temporaryHumidity < maxHumidity)
@@ -269,5 +266,59 @@ namespace WeatherData
             return result;
         }
 
+        internal static List<SensorDataTime> GetUnitForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
+        {
+            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(date.Month, sensorData);
+            List<SensorDataTime> unitAvgPerDay = new();
+
+            for (int i = 0; i < dayList.Count; i++)
+            {
+                unitAvgPerDay.Add(GetUnitAvgForSelectedDay(dayList[i], sensorData));
+            }
+            return unitAvgPerDay;
+        }
+
+        private static SensorDataTime GetUnitAvgForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
+        {
+            List<SensorDataTime> matches = Helpers.GetSelectedDateData(dateDay, sensorData);
+
+            double temperature = 0.0;
+            double humidity = 0.0;
+            foreach (SensorDataTime data in matches)
+            {
+
+                double temporaryTemp = double.Parse(data.Temp, System.Globalization.CultureInfo.InvariantCulture);
+                if (temporaryTemp > -30 && temporaryTemp < 40)
+                    temperature += temporaryTemp;
+
+                double temporaryHumidity = double.Parse(data.Humidity, System.Globalization.CultureInfo.InvariantCulture);
+                if (temporaryHumidity > 0 && temporaryHumidity < 100)
+                    humidity += temporaryHumidity;
+
+            }
+            temperature = temperature / (double)matches.Count;
+            humidity = humidity / (double)matches.Count;
+
+            SensorDataTime dataDay = new SensorDataTime
+            {
+                Date = dateDay,
+                Temp = temperature.ToString("0.00"),
+                Humidity = humidity.ToString("0"),
+                Location = sensorData[0].Location,
+            };
+
+            return dataDay;
+        }
+
+        internal static List<SensorDataTime> DivideDataPerLocation(List<SensorDataTime> sensorData, string location)
+        {
+            List<SensorDataTime> locationData = new();
+
+            foreach (SensorDataTime data in sensorData)
+                if (data.Location == (location))
+                    locationData.Add(data);
+
+            return locationData;
+        }
     }
 }

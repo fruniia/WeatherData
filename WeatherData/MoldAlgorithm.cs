@@ -27,19 +27,18 @@ namespace WeatherData
         //Vilken temperatur är det risk för mögel >0 && < 50
         //Fuktprocent över 75 % kan det börja växa
 
-        public static void CalculateRiskForMoldGrowth()
+        public static void CalculateRiskForMoldGrowth(List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
             double riskForMoldGrowth = 0;
-            int maxValue = 150;
-            int minValue = 76;
-            double asg = (maxValue - minValue) / 100.00;
-
+            const double asg = (150 - 76) / 100.00; //Maxvalue 150 Minvalue 76
+            int counter = 0;
+            double temp = 0;
+            double humidity = 0;
             foreach(var sensorDataTime in sensorData) 
             {
-                double temp = Double.Parse(sensorDataTime.Temp, System.Globalization.CultureInfo.InvariantCulture);
-                double humidity = Double.Parse(sensorDataTime.Humidity, System.Globalization.CultureInfo.InvariantCulture);
-                    riskForMoldGrowth = (temp + humidity) * asg;
+                temp += Double.Parse(sensorDataTime.Temp, System.Globalization.CultureInfo.InvariantCulture);
+                humidity += Double.Parse(sensorDataTime.Humidity, System.Globalization.CultureInfo.InvariantCulture);
+                counter++;
                 //if ((temp > 0 || temp < 50) && humidity >= 75)
                 //{
 
@@ -48,8 +47,10 @@ namespace WeatherData
                 //{
                 //    riskForMoldGrowth = 0;
                 //}
-                Console.WriteLine(riskForMoldGrowth.ToString("0") + " %" + sensorDataTime.Date.ToString());
+
             }
+                riskForMoldGrowth = ((temp + humidity)/counter) * asg;
+                Console.WriteLine(riskForMoldGrowth.ToString("0") + " %");
         }
     }
 }

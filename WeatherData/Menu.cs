@@ -34,6 +34,7 @@ namespace WeatherData
             return index;
 
         }
+
         internal static DateTime SelectDateDay(List<SensorDataTime> sensorData)
         {
             int month = 6;
@@ -49,8 +50,6 @@ namespace WeatherData
                 else if (dayIndex >= 0) return (dayList[dayIndex]);
                 dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);
             }
-            return DateTime.Today;
-
         }
 
         internal static DateTime SelectDateMonth()
@@ -67,18 +66,12 @@ namespace WeatherData
         internal static void SelectDay(List<SensorDataTime> sensorData)
         {
             DateTime dateDay = SelectDateDay(sensorData);
-            List<double> avgTemperaturePerDay = GetTemperatureForSelectedDay(dateDay, sensorData);
+            List<double> avgTemperaturePerDay = Helpers.GetTemperatureForSelectedDay(dateDay, sensorData);
 
             foreach (double temp in avgTemperaturePerDay)
             {
                 Console.WriteLine(temp.ToString("0.00"));
             }
-        }
-
-        private static List<double> GetTemperatureForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
-        {
-            List<SensorDataTime> matches = Helpers.GetSelectedDateData(dateDay, sensorData);
-            return Helpers.GetDivideDataTempPerLocation(matches);
         }
 
         internal static void SelectMonth(List<SensorDataTime> sensorData)
@@ -101,7 +94,7 @@ namespace WeatherData
 
             for (int i = 0; i < dayList.Count; i++)
             {
-                List<double> avgTemperaturePerDay = GetTemperatureForSelectedDay(dayList[i], sensorData);
+                List<double> avgTemperaturePerDay = Helpers.GetTemperatureForSelectedDay(dayList[i], sensorData);
 
                 avgTemperaturePerMonth[0] += (avgTemperaturePerDay[0]);
                 avgTemperaturePerMonth[1] += (avgTemperaturePerDay[1]);
@@ -111,29 +104,89 @@ namespace WeatherData
             return avgTemperaturePerMonth;
         }
 
+        private static List<double> GetHumidityForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
+        {
+            List<double> avgHumidityPerMonth = new();
+            avgHumidityPerMonth.Add(0.0);
+            avgHumidityPerMonth.Add(0.0);
+            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(date.Month, sensorData);
+
+            for (int i = 0; i < dayList.Count; i++)
+            {
+                List<double> avgHumidityPerDay = Helpers.GetHumidityForSelectedDay(dayList[i], sensorData);
+
+                avgHumidityPerMonth[0] += (avgHumidityPerDay[0]);
+                avgHumidityPerMonth[1] += (avgHumidityPerDay[1]);
+            }
+            avgHumidityPerMonth[0] = avgHumidityPerMonth[0] / dayList.Count;
+            avgHumidityPerMonth[1] = avgHumidityPerMonth[1] / dayList.Count;
+            return avgHumidityPerMonth;
+        }
+
         internal static void GetTemperatureForAllMonths(List<SensorDataTime> sensorData)
         {
-            //List<string> monthList = DateTimeFormatInfo.CurrentInfo.MonthNames.Skip(5).SkipLast(1).ToList();
-            List<double> avgTemperature = new();
-            avgTemperature.Add(0.0);
-            avgTemperature.Add(0.0);
+
             List<string> avgTemperaturePerMonthList = new();
 
             for (var i = 6; i <= 12; i++)
             {
                 List<double> avgTemperaturePerMonth = GetTemperatureForSelectedMonth(new DateTime(2016, i, 1), sensorData);
 
-                avgTemperature[0] += avgTemperaturePerMonth[0];
-                avgTemperature[1] += avgTemperaturePerMonth[1];
-                avgTemperaturePerMonthList.Add("inside: " + avgTemperaturePerMonth[0].ToString("0.00") + "   outside: " + avgTemperaturePerMonth[1].ToString("0.00"));
+                avgTemperaturePerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgTemperaturePerMonth[0].ToString("0.00") + "   Outside: " + avgTemperaturePerMonth[1].ToString("0.00"));
             }
-            avgTemperature[0] = avgTemperature[0] / 7;
-            avgTemperature[1] = avgTemperature[1] / 7;
 
-            foreach (double temp in avgTemperature)
+            foreach (string temp in avgTemperaturePerMonthList)
             {
-                Console.WriteLine(temp.ToString("0.00"));
+                Console.WriteLine(temp);
             }
+        }
+
+        internal static void GetHumidityForAllMonths(List<SensorDataTime> sensorData)
+        {
+
+            List<string> avgHumidityPerMonthList = new();
+
+            for (var i = 6; i <= 12; i++)
+            {
+                List<double> avgHumidityPerMonth = GetHumidityForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+
+                avgHumidityPerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgHumidityPerMonth[0].ToString("0") + " %   Outside: " + avgHumidityPerMonth[1].ToString("0") + " %");
+            }
+
+            foreach (string temp in avgHumidityPerMonthList)
+            {
+                Console.WriteLine(temp);
+            }
+        }
+
+        internal static void GetHottestDays(List<SensorDataTime> sensorData)
+        {
+            List<string> avgTemperaturePerMonthList = new();
+
+            for (var i = 6; i <= 12; i++)
+            {
+                List<double> avgTemperaturePerMonth = GetTemperatureForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+
+                avgTemperaturePerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgTemperaturePerMonth[0].ToString("0.00") + "   Outside: " + avgTemperaturePerMonth[1].ToString("0.00"));
+            }
+
+            foreach (string temp in avgTemperaturePerMonthList)
+            {
+                Console.WriteLine(temp);
+            }
+        }
+
+        internal static void GetColdestDays(List<SensorDataTime> sensorData)
+        {
+            List<string> avgTemperaturePerMonthList = new();
+
+            for (var i = 6; i <= 12; i++)
+            {
+                List<double> avgTemperaturePerMonth = GetTemperatureForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+
+                avgTemperaturePerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgTemperaturePerMonth[0].ToString("0.00") + "   Outside: " + avgTemperaturePerMonth[1].ToString("0.00"));
+            }
+
             foreach (string temp in avgTemperaturePerMonthList)
             {
                 Console.WriteLine(temp);

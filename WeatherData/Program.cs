@@ -7,6 +7,7 @@ namespace WeatherData
     {
         static void Main(string[] args)
         {
+            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
 
 
             //List<string> mainMenuText = new()
@@ -19,12 +20,18 @@ namespace WeatherData
 
             //Menu.MenuList("Test", 1, mainMenuText, false);
 
-            List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
+
+
+
+            //SaveData.SaveListToFile(Helpers.ConvertMeteoroligicalToStringList(Helpers.GetMeteorological(sensorData, 10)), "MeteorologicalData");
+
             //Menu.SelectDay(sensorData);
             //Menu.SelectMonth(sensorData);
-            Menu.GetTemperatureForAllMonths(sensorData);
+            //Menu.GetTemperatureForAllMonths(sensorData);
+            Menu.GetHumidityForAllMonths(sensorData);
+            Menu.GetHottestDays(sensorData);
+            Menu.GetColdestDays(sensorData);
             //Menu.SelectMonth();
-
 
 
         }

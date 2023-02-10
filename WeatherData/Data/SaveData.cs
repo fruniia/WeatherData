@@ -26,7 +26,7 @@ namespace WeatherData.Data
 
         }
 
-        public static void ProcessListToSave(List<string> templist)
+        internal static void ProcessListToSave(List<string> templist)
         {
             string filename = "";
             while (filename.Length < 3)
@@ -34,6 +34,11 @@ namespace WeatherData.Data
                 filename = Helpers.GetStringFromUser("Enter filename at least three letters or digits: ");
             }
             SaveToTextFile(templist, filename + ".txt");
+        }
+
+        internal static void SaveListToFile(List<string> templist, string fileName)
+        {
+            SaveToTextFile(templist, fileName + ".txt");
         }
     }
 }

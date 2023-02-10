@@ -25,7 +25,7 @@ namespace WeatherData
         }
         internal static List<SensorDataTime> GetMatchValue(string pattern, List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> result = new List<SensorDataTime>();
+            List<SensorDataTime> result = new();
             Regex regex = new Regex(pattern);
 
             foreach (var data in sensorData)

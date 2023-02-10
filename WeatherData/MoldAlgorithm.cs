@@ -10,60 +10,36 @@ namespace WeatherData
 {
     internal class MoldAlgorithm
     {
-        
-
-        /*◦ I uppgiften ingår att skapa en
-            algoritm/formel för mögelrisk.
-            ◦ Diskutera I Gruppen
-            ◦ Försök förenkla detta till en hanterbar
-            formel, som fungerar för alla data I filen.
-            ◦ Skapa en skala för risk mellan 0-100
-         */
-
-        // MAX 150 -> MIN 76
-
-        //Skillnad är 74 -> skala 1 - 100 (74/100)
-        //Hämta temperatur
-        //Hämta fukt
-        //Hämta location
-
-        //Vilken temperatur är det risk för mögel >0 && < 50
-        //Fuktprocent över 75 % kan det börja växa
-
         public static List<SensorDataTime> CalculateRiskForMoldGrowth(List<SensorDataTime> sensorData)
         {
             List<SensorDataTime> moldRisk = new();
-            double riskForMoldGrowth = 0;
-            const double asg = (150 - 76) / 100.00; //Maxvalue 150 Minvalue 76
-            double temp = 0;
-            double humidity = 0;
+            const double _moldHum = 75;
+            const double _scale = 4;
+            // ((Temperatur * 2) * ((Humidity - 75) * 4))
 
-            foreach (var sensorDataTime in sensorData)
+            foreach (var data in sensorData)
             {
-              
-                temp += Double.Parse(sensorDataTime.Temp);
-                humidity += Double.Parse(sensorDataTime.Humidity);
-                riskForMoldGrowth = ((temp + humidity) * asg);
-                temp = 0;
-                humidity = 0;
-                moldRisk.Add(  new SensorDataTime
+                double tempPrecent = 0;
+                if (Double.Parse(data.Temp) < 50 && Double.Parse(data.Temp) > 0 && Double.Parse(data.Humidity) >= _moldHum)
+                    tempPrecent = (2 * Double.Parse(data.Temp));
+
+                double humPrecent = 0;
+                if (Double.Parse(data.Humidity) >= _moldHum && tempPrecent > 0.1)
+                    humPrecent = ((Double.Parse(data.Humidity) - _moldHum) * _scale);
+
+                double riskForMoldGrowth = Math.Abs((tempPrecent + humPrecent) * 0.5);
+
+                moldRisk.Add(new SensorDataTime
                 {
-                    Date = sensorDataTime.Date,
-                    Temp = sensorDataTime.Temp,
-                    Humidity = sensorDataTime.Humidity,
-                    Location = sensorDataTime.Location,
+                    Date = data.Date,
+                    Temp = data.Temp,
+                    Humidity = data.Humidity,
+                    Location = data.Location,
                     MoldRisk = riskForMoldGrowth.ToString("0")
                 });
-
             }
-
             return moldRisk;
-
         }
-        //public static List<SensorDataTime> CalculateAverageRiskForMoldGrowth(List<SensorDataTime> sensorData)
-        //{
-
-        //}
     }
 }
 

@@ -45,31 +45,6 @@ namespace WeatherData
             return formattedDates;
         }
 
-        //Utomhus
-        //Inomhus
-        //Sparad data
-
-        //Textfil
-        //------- Medeltemperatur ute och inne, per månad
-        //------- Medelluftfuktighet inne och ute, per månad
-        //Medelmögelrisk inne och ute, per månad.
-        //------- Datum för höst och vinter 2016 (om något av detta inte inträffar, ange när det var som närmast)
-        //Skriv ut algoritmen för mögel
-
-        //Följande information ska kunna visas
-        /*  Utomhus
-         *  ------ ◦ Medeltemperatur per dag, för valt datum (sökmöjlighet med validering)
-            ------ ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
-            ------ ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
-            ------ ◦ Sortering av minst till störst risk av mögel
-            ------ ◦ Datum för meteorologisk Höst
-            ------ ◦ Datum för meteologisk vinter (OBS Mild vinter!)
-             Inomhus
-            ------- ◦ Medeltemperatur för valt datum (sökmöjlighet med validering)
-            ------- ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
-            ------- ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
-            ------- ◦ Sortering av minst till störst risk av mögel
-                     */
 
         internal static List<SensorDataTime> GetSelectedDateWithRegex(string pattern, List<SensorDataTime> sensorData)
         {
@@ -261,8 +236,8 @@ namespace WeatherData
         internal static List<string> ConvertMeteoroligicalToStringList(List<DateTime> dateTimes)
         {
             List<string> result = new List<string>();
-            result.Add("Meteorologist Autumn Date: " + dateTimes[0]);
-            result.Add("Meteorologist Winter Date: " + dateTimes[1]);
+            result.Add("Meteorologist Autumn Date: " + dateTimes[0].ToString("yyyy.MM.dd"));
+            result.Add("Meteorologist Winter Date: " + dateTimes[1].ToString("yyyy.MM.dd"));
             return result;
         }
 
@@ -284,6 +259,7 @@ namespace WeatherData
 
             double temperature = 0.0;
             double humidity = 0.0;
+            double moldRisk = 0.0;
             foreach (SensorDataTime data in matches)
             {
 
@@ -298,12 +274,14 @@ namespace WeatherData
             }
             temperature = temperature / (double)matches.Count;
             humidity = humidity / (double)matches.Count;
+            moldRisk = moldRisk / (double)matches.Count;
 
             SensorDataTime dataDay = new SensorDataTime
             {
                 Date = dateDay,
                 Temp = temperature.ToString("0.00"),
                 Humidity = humidity.ToString("0"),
+                MoldRisk = moldRisk.ToString("0"),
                 Location = sensorData[0].Location,
             };
 
@@ -353,19 +331,41 @@ namespace WeatherData
             return names;
         }
 
+        internal static List<SensorDataTime> GetSortedListPerMold(List<SensorDataTime> dataAvgPerDay)
+        {
+            var names = dataAvgPerDay
+                .OrderByDescending(g => double.Parse(g.MoldRisk, System.Globalization.CultureInfo.InvariantCulture))
+                .Select(g => g).ToList();
+            return names;
+        }
+
         internal static List<string> ConvertModelListToStringListWithMolding(List<SensorDataTime> modelList)
         {
             List<string> unitList = new List<string>();
             for (int i = 0; i < modelList.Count; i++)
-                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(3) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
+                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
             return unitList;
         }
+
         internal static List<string> ConvertModelListToStringList(List<SensorDataTime> modelList)
         {
             List<string> unitList = new List<string>();
             for (int i = 0; i < modelList.Count; i++)
-                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(3) + " %");
+                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %");
             return unitList;
+        }
+
+        internal static List<string> ConvertModelListToStringListWithMoldingPerYear(List<SensorDataTime> modelList)
+        {
+            List<string> unitList = new List<string>();
+            for (int i = 0; i < modelList.Count; i++)
+                unitList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i+6).PadRight(10) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
+            return unitList;
+        }
+
+        internal static string ConvertDoubleToStringListWithDate(List<double> avgTemperature)
+        {
+            return "  Inside: " + avgTemperature[0].ToString("0.00") + "  Outside: " + avgTemperature[1].ToString("0.00");
         }
     }
 }

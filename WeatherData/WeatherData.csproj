@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="bin\Debug\net6.0\Data\temp.txt" />
+    <None Include="bin\Debug\net6.0\SensorData\sensorData.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bin\Debug\net6.0\SensorData\sensorData.txt" />
+    <Folder Include="bin\Debug\net6.0\Data\" />
   </ItemGroup>
 
 </Project>

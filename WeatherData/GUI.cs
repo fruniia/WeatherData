@@ -25,7 +25,7 @@ namespace WeatherData
         
         internal static void PrintText(string output)
         {
-            Console.Clear();
+            //Console.Clear();
             Console.WriteLine(output);
             Console.WriteLine();
         }

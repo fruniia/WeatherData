@@ -59,16 +59,16 @@ namespace WeatherData
         //Följande information ska kunna visas
         /*  Utomhus
          *  ------ ◦ Medeltemperatur per dag, för valt datum (sökmöjlighet med validering)
-            ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
-            ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
-            ◦ Sortering av minst till störst risk av mögel
+            ------ ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
+            ------ ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
+            ------ ◦ Sortering av minst till störst risk av mögel
             ------ ◦ Datum för meteorologisk Höst
             ------ ◦ Datum för meteologisk vinter (OBS Mild vinter!)
              Inomhus
-            ◦ Medeltemperatur för valt datum (sökmöjlighet med validering)
-            ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
-            ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
-            ◦ Sortering av minst till störst risk av mögel
+            ------- ◦ Medeltemperatur för valt datum (sökmöjlighet med validering)
+            ------- ◦ Sortering av varmast till kallaste dagen enligt medeltemperatur per dag
+            ------- ◦ Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag
+            ------- ◦ Sortering av minst till störst risk av mögel
                      */
 
         internal static List<SensorDataTime> GetSelectedDateWithRegex(string pattern, List<SensorDataTime> sensorData)

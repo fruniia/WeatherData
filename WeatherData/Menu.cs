@@ -170,5 +170,11 @@ namespace WeatherData
             }
             return result;
         }
+
+        internal static List<SensorDataTime> GetAvgUnitPerMonthList(List<SensorDataTime> sensorData)
+        {
+
+            return;
+        }
     }
 }

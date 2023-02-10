@@ -32,6 +32,12 @@ namespace WeatherData
 
             List<SensorDataTime> insideDataAvgPerDay = Menu.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Inside"));
             List<SensorDataTime> outsideDataAvgPerDay = Menu.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Outside"));
+            
+            List<SensorDataTime> insideMold = MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerDay);
+            List<SensorDataTime> outsideMold = MoldAlgorithm.CalculateRiskForMoldGrowth(outsideDataAvgPerDay);
+            GUI.PrintList("sortedInsideDataPerTemp", Helpers.ConvertModelListToStringListWithMolding(insideMold), true, 1, 2);
+            GUI.PrintList("sortedOutsideDataPerTemp", Helpers.ConvertModelListToStringListWithMolding(outsideMold), true, 95, 2);
+            Console.ReadLine();
 
             //GUI.PrintList("Hej", Helpers.ConvertModelListToStringList(insideDataAvgPerDay), true, 1, 2);
             //GUI.PrintList("Hej", Helpers.ConvertModelListToStringList(outsideDataAvgPerDay), true, 85, 2);
@@ -78,7 +84,6 @@ namespace WeatherData
 
 
             //Menu.SelectMonth();
-            MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerDay);
 
         }
     }

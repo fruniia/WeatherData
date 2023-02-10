@@ -353,11 +353,18 @@ namespace WeatherData
             return names;
         }
 
+        internal static List<string> ConvertModelListToStringListWithMolding(List<SensorDataTime> modelList)
+        {
+            List<string> unitList = new List<string>();
+            for (int i = 0; i < modelList.Count; i++)
+                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(3) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
+            return unitList;
+        }
         internal static List<string> ConvertModelListToStringList(List<SensorDataTime> modelList)
         {
             List<string> unitList = new List<string>();
             for (int i = 0; i < modelList.Count; i++)
-                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(13) + "Temperature: " + modelList[i].Temp.PadRight(10) + "Humidity: " + modelList[i].Humidity + " %");
+                unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(3) + " %");
             return unitList;
         }
     }

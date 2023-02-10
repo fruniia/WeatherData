@@ -15,7 +15,7 @@ namespace WeatherData.Models
         public string Temp { get; set; }
         public string Humidity { get; set; }
         public string Location { get; set; }
-
+        public string? MoldRisk { get; set; }
         internal static List<SensorDataTime> GetSensorData()
         {
             List<string> sensorData = ReadData.GetSensorData();

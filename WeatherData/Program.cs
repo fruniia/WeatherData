@@ -8,10 +8,10 @@ namespace WeatherData
         static void Main(string[] args)
         {
             List<SensorDataTime> sensorData = SensorDataTime.GetSensorData();
-            List<SensorDataTime> insideDataAvgPerDay = Menu.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Inside"));
-            List<SensorDataTime> outsideDataAvgPerDay = Menu.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Outside"));
-            List<SensorDataTime> insideDataAvgPerMonth = Menu.GetAvgUnitPerMonthList(Helpers.DivideDataPerLocation(sensorData, "Inside"));
-            List<SensorDataTime> outsideDataAvgPerMonth = Menu.GetAvgUnitPerMonthList(Helpers.DivideDataPerLocation(sensorData, "Outside"));
+            List<SensorDataTime> insideDataAvgPerDay = Helpers.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Inside"));
+            List<SensorDataTime> outsideDataAvgPerDay = Helpers.GetAvgUnitPerDayList(Helpers.DivideDataPerLocation(sensorData, "Outside"));
+            List<SensorDataTime> insideDataAvgPerMonth = Helpers.GetAvgUnitPerMonthList(Helpers.DivideDataPerLocation(sensorData, "Inside"));
+            List<SensorDataTime> outsideDataAvgPerMonth = Helpers.GetAvgUnitPerMonthList(Helpers.DivideDataPerLocation(sensorData, "Outside"));
 
             Menu.MainMenu(sensorData, insideDataAvgPerDay, outsideDataAvgPerDay, insideDataAvgPerMonth, outsideDataAvgPerMonth);
         }

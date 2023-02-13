@@ -36,7 +36,7 @@ namespace WeatherData
 
         }
 
-        internal static DateTime SelectDateDay(List<SensorDataTime> sensorData)
+        private static DateTime SelectDateDay(List<SensorDataTime> sensorData)
         {
             int month = 6;
          
@@ -47,24 +47,22 @@ namespace WeatherData
                 int dayIndex = Menu.MenuList(DateTimeFormatInfo.CurrentInfo.GetMonthName(month), 0, Helpers.FormatDates(dayList), true);
                 if (dayIndex == -2 && month < 12) month++;
                 else if (dayIndex == -3 && month > 6 && month > 1) month--;
-                //else if (dayIndex == -1) return;
                 else if (dayIndex >= 0) return (dayList[dayIndex]);
                 dayList = Helpers.GetDatesPerMonthFromSensorData(month, sensorData);
             }
         }
 
-        internal static DateTime SelectDateMonth()
+        private static DateTime SelectDateMonth()
         {
             List<string> monthList = DateTimeFormatInfo.CurrentInfo.MonthNames.Skip(5).SkipLast(1).ToList();
             while (true)
             {
                 int monthIndex = Menu.MenuList("Pick a Month", 0, monthList, false);
-                //else if (dayIndex == -1) return;
                 if (monthIndex >= 0) return (new DateTime(2016, monthIndex + 6, 1));
             }
         }
 
-        internal static void SelectDay(List<SensorDataTime> sensorData)
+        private static void SelectDay(List<SensorDataTime> sensorData)
         {
             Console.Clear();
             DateTime dateDay = SelectDateDay(sensorData);
@@ -76,11 +74,11 @@ namespace WeatherData
             Console.Clear();
         }
 
-        internal static void SelectMonth(List<SensorDataTime> sensorData)
+        private static void SelectMonth(List<SensorDataTime> sensorData)
         {
             Console.Clear();
             DateTime date = SelectDateMonth();
-            List<double> avgTemperaturePerMonth = GetTemperatureForSelectedMonth(date, sensorData);
+            List<double> avgTemperaturePerMonth = Helpers.GetTemperatureForSelectedMonth(date, sensorData);
 
             Console.Clear();
             GUI.PrintText("Selected Month AvgTemperature\n\n" + date.ToString("MMMM") + Helpers.ConvertDoubleToStringListWithDate(avgTemperaturePerMonth));
@@ -88,52 +86,14 @@ namespace WeatherData
             Console.Clear();
         }
 
-        private static List<double> GetTemperatureForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
-        {
-            List<double> avgTemperaturePerMonth = new();
-            avgTemperaturePerMonth.Add(0.0);
-            avgTemperaturePerMonth.Add(0.0);
-            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(date.Month, sensorData);
-
-            for (int i = 0; i < dayList.Count; i++)
-            {
-                List<double> avgTemperaturePerDay = Helpers.GetTemperatureForSelectedDay(dayList[i], sensorData);
-
-                avgTemperaturePerMonth[0] += (avgTemperaturePerDay[0]);
-                avgTemperaturePerMonth[1] += (avgTemperaturePerDay[1]);
-            }
-            avgTemperaturePerMonth[0] = avgTemperaturePerMonth[0] / dayList.Count;
-            avgTemperaturePerMonth[1] = avgTemperaturePerMonth[1] / dayList.Count;
-            return avgTemperaturePerMonth;
-        }
-
-        private static List<double> GetHumidityForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
-        {
-            List<double> avgHumidityPerMonth = new();
-            avgHumidityPerMonth.Add(0.0);
-            avgHumidityPerMonth.Add(0.0);
-            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(date.Month, sensorData);
-
-            for (int i = 0; i < dayList.Count; i++)
-            {
-                List<double> avgHumidityPerDay = Helpers.GetHumidityForSelectedDay(dayList[i], sensorData);
-
-                avgHumidityPerMonth[0] += (avgHumidityPerDay[0]);
-                avgHumidityPerMonth[1] += (avgHumidityPerDay[1]);
-            }
-            avgHumidityPerMonth[0] = avgHumidityPerMonth[0] / dayList.Count;
-            avgHumidityPerMonth[1] = avgHumidityPerMonth[1] / dayList.Count;
-            return avgHumidityPerMonth;
-        }
-
-        internal static List<string> GetTemperatureForAllMonths(List<SensorDataTime> sensorData)
+        private static List<string> ShowTemperatureForAllMonths(List<SensorDataTime> sensorData)
         {
 
             List<string> avgTemperaturePerMonthList = new();
 
             for (var i = 6; i <= 12; i++)
             {
-                List<double> avgTemperaturePerMonth = GetTemperatureForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+                List<double> avgTemperaturePerMonth = Helpers.GetTemperatureForSelectedMonth(new DateTime(2016, i, 1), sensorData);
 
                 avgTemperaturePerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgTemperaturePerMonth[0].ToString("0.00") + "   Outside: " + avgTemperaturePerMonth[1].ToString("0.00"));
             }
@@ -141,64 +101,7 @@ namespace WeatherData
             return avgTemperaturePerMonthList;
         }
 
-        internal static List<string> GetHumidityForAllMonths(List<SensorDataTime> sensorData)
-        {
-
-            List<string> avgHumidityPerMonthList = new();
-
-            for (var i = 6; i <= 12; i++)
-            {
-                List<double> avgHumidityPerMonth = GetHumidityForSelectedMonth(new DateTime(2016, i, 1), sensorData);
-
-                avgHumidityPerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgHumidityPerMonth[0].ToString("0") + " %   Outside: " + avgHumidityPerMonth[1].ToString("0") + " %");
-            }
-
-            return avgHumidityPerMonthList;
-        }
-
-        internal static List<SensorDataTime> GetAvgUnitPerDayList(List<SensorDataTime> sensorData)
-        {
-            List<SensorDataTime> result = new();
-
-            for (var i = 6; i <= 12; i++)
-            {
-                List<SensorDataTime> AvgUnitDataList = Helpers.GetUnitForSelectedMonth(new DateTime(2016, i, 1), sensorData);
-                foreach (SensorDataTime unit in AvgUnitDataList) result.Add(unit);
-            }
-            return result;
-        }
-
-        internal static List<SensorDataTime> GetAvgUnitPerMonthList(List<SensorDataTime> sensorData)
-        {
-            List<SensorDataTime> result = new();
-
-            for (var i = 6; i <= 12; i++)
-            {
-                List<SensorDataTime> AvgUnitDataList = Helpers.GetUnitForSelectedMonth(new DateTime(2016, i, 1), sensorData);
-
-                double tempTemperature = 0;
-                double tempHumidity = 0;
-                double tempMold = 0;
-                foreach (SensorDataTime unit in AvgUnitDataList)
-                {
-                    tempTemperature += double.Parse(unit.Temp);
-                    tempHumidity += double.Parse(unit.Humidity);
-                    tempMold += double.Parse(unit.MoldRisk);
-                }
-
-                result.Add(new SensorDataTime
-                {
-                    Date = AvgUnitDataList[0].Date,
-                    Temp = (tempTemperature / (double)AvgUnitDataList.Count).ToString("0.00"),
-                    Humidity = (tempHumidity / (double)AvgUnitDataList.Count).ToString("0"),
-                    MoldRisk = (tempMold / (double)AvgUnitDataList.Count).ToString("0"),
-                    Location = AvgUnitDataList[0].Location
-                });
-            }
-            return result;
-        }
-
-        internal static void ShowMoldPerDay(List<SensorDataTime> insideDataAvgPerDay, List<SensorDataTime> outsideDataAvgPerDay)
+        private static void ShowMoldPerDay(List<SensorDataTime> insideDataAvgPerDay, List<SensorDataTime> outsideDataAvgPerDay)
         {
             Console.Clear();
             List<SensorDataTime> insideMoldPerDay = MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerDay);
@@ -209,7 +112,7 @@ namespace WeatherData
             Console.Clear();
         }
 
-        internal static void ShowMoldPerMonth(List<SensorDataTime> insideDataAvgPerMonth, List<SensorDataTime> outsideDataAvgPerMonth)
+        private static void ShowMoldPerMonth(List<SensorDataTime> insideDataAvgPerMonth, List<SensorDataTime> outsideDataAvgPerMonth)
         {
             Console.Clear();
             GUI.PrintList("Mold Inside Per Month: ((Temperatur * 2) * ((Humidity - 75) * 4)", Helpers.ConvertModelListToStringListWithMoldingPerYear(MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerMonth)), true, 1, 2);
@@ -218,7 +121,7 @@ namespace WeatherData
             Console.Clear();
         }
 
-        internal static void ShowSortedData(List<SensorDataTime> insideDataAvgPerDay, List<SensorDataTime> outsideDataAvgPerDay)
+        private static void ShowSortedData(List<SensorDataTime> insideDataAvgPerDay, List<SensorDataTime> outsideDataAvgPerDay)
         {
             Console.Clear();
             List<SensorDataTime> sortedInsideDataPerTemp = Helpers.GetSortedListPerTemp(insideDataAvgPerDay);
@@ -261,14 +164,15 @@ namespace WeatherData
             Console.Clear();
         }
 
-        internal static void SaveDataFiles(List<SensorDataTime> sensorData, List<SensorDataTime> insideDataAvgPerMonth, List<SensorDataTime> outsideDataAvgPerMonth)
+        private static void SaveDataFiles(List<SensorDataTime> sensorData, List<SensorDataTime> insideDataAvgPerMonth, List<SensorDataTime> outsideDataAvgPerMonth)
         {
-            SaveData.SaveListToFile(GetTemperatureForAllMonths(sensorData), "TemperatureForAllMonths");
-            SaveData.SaveListToFile(GetHumidityForAllMonths(sensorData), "HumidityForAllMonths");
+            SaveData.SaveListToFile(ShowTemperatureForAllMonths(sensorData), "TemperatureForAllMonths");
+            SaveData.SaveListToFile(Helpers.GetHumidityForAllMonths(sensorData), "HumidityForAllMonths");
             SaveData.SaveListToFile(Helpers.ConvertMeteoroligicalToStringList(Helpers.GetMeteorological(sensorData, 10)), "MeteorologicalData");
             SaveData.SaveListToFile(Helpers.ConvertModelListToStringListWithMoldingPerYear(MoldAlgorithm.CalculateRiskForMoldGrowth(insideDataAvgPerMonth)), "RiskForMoldGrowthPerMonthInside");
             SaveData.SaveListToFile(Helpers.ConvertModelListToStringListWithMoldingPerYear(MoldAlgorithm.CalculateRiskForMoldGrowth(outsideDataAvgPerMonth)), "RiskForMoldGrowthPerMonthsOutside");
 
+            GUI.PrintText("All Data Is Saved!");
             Console.ReadLine();
             Console.Clear();
         }

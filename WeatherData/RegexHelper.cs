@@ -17,27 +17,5 @@ namespace WeatherData
         {
             return @"^(?<Date>\b2016\b-((0)[0-9]|(1)[0-2])-([0-2][0-9]|(3)[0-1]))\s.{8},\b(?<Location>Inne|Ute)\b,(?<Temp>-?\d{1,2}.\d),(?<Humidity>\d{2})$";
         }
-        internal static string GetPattern(string month, string day)
-        {
-            return $"^{day}/{month}/2016$";
-            //return "^(?<Date>\\b-" + $"[{day}]" + "{2}-" + $"[{month}]" + "{2}\\b2016)$";
-
-        }
-        internal static List<SensorDataTime> GetMatchValue(string pattern, List<SensorDataTime> sensorData)
-        {
-            List<SensorDataTime> result = new();
-            Regex regex = new Regex(pattern);
-
-            foreach (var data in sensorData)
-            {
-                MatchCollection matches = regex.Matches(data.Date.ToString());
-                if (matches.Count != 0)
-                {
-                    result.Add(data);
-                }
-            }
-            return result;
-        }
-
     }
 }

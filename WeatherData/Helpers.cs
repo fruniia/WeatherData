@@ -13,96 +13,142 @@ namespace WeatherData
 {
     internal class Helpers
     {
-        public static string GetStringFromUser(string prompt)
+        internal static List<double> GetTemperatureForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
         {
-            Console.Write(prompt);
-            string? result = Console.ReadLine();
-            result = result.Any(x => char.IsLetterOrDigit(x)).ToString();
-            if (result == null)
-                result = "";
+            List<double> avgTemperaturePerMonth = new()
+            {
+                0.0,
+                0.0
+            };
+            List<DateTime> dayList = GetDatesPerMonthFromSensorData(date.Month, sensorData);
+
+            for (int i = 0; i < dayList.Count; i++)
+            {
+                List<double> avgTemperaturePerDay = GetTemperatureForSelectedDay(dayList[i], sensorData);
+
+                avgTemperaturePerMonth[0] += (avgTemperaturePerDay[0]);
+                avgTemperaturePerMonth[1] += (avgTemperaturePerDay[1]);
+            }
+            avgTemperaturePerMonth[0] = avgTemperaturePerMonth[0] / dayList.Count;
+            avgTemperaturePerMonth[1] = avgTemperaturePerMonth[1] / dayList.Count;
+            return avgTemperaturePerMonth;
+        }
+
+        internal static List<SensorDataTime> GetAvgUnitPerMonthList(List<SensorDataTime> sensorData)
+        {
+            List<SensorDataTime> result = new();
+
+            for (var i = 6; i <= 12; i++)
+            {
+                List<SensorDataTime> AvgUnitDataList = GetUnitForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+
+                double tempTemperature = 0;
+                double tempHumidity = 0;
+                double tempMold = 0;
+                foreach (SensorDataTime unit in AvgUnitDataList)
+                {
+                    tempTemperature += double.Parse(unit.Temp);
+                    tempHumidity += double.Parse(unit.Humidity);
+                    tempMold += double.Parse(unit.MoldRisk);
+                }
+
+                result.Add(new SensorDataTime
+                {
+                    Date = AvgUnitDataList[0].Date,
+                    Temp = (tempTemperature / (double)AvgUnitDataList.Count).ToString("0.00"),
+                    Humidity = (tempHumidity / (double)AvgUnitDataList.Count).ToString("0"),
+                    MoldRisk = (tempMold / (double)AvgUnitDataList.Count).ToString("0"),
+                    Location = AvgUnitDataList[0].Location
+                });
+            }
             return result;
         }
 
-        internal static List<DateTime> GetDatesPerMonth(int month, int year = 2016)
+        internal static List<SensorDataTime> GetAvgUnitPerDayList(List<SensorDataTime> sensorData)
         {
-            return Enumerable.Range(1, DateTime.DaysInMonth(year, month))
-                             .Select(day => new DateTime(year, month, day))
-                             .ToList();
+            List<SensorDataTime> result = new();
+
+            for (var i = 6; i <= 12; i++)
+            {
+                List<SensorDataTime> AvgUnitDataList = GetUnitForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+                foreach (SensorDataTime unit in AvgUnitDataList) result.Add(unit);
+            }
+            return result;
         }
 
-        internal static List<DateTime> GetDatesPerYear(int v)
+        private static List<double> GetHumidityForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
         {
-            throw new NotImplementedException();
+            List<double> avgHumidityPerMonth = new()
+            {
+                0.0,
+                0.0
+            };
+            List<DateTime> dayList = GetDatesPerMonthFromSensorData(date.Month, sensorData);
+
+            for (int i = 0; i < dayList.Count; i++)
+            {
+                List<double> avgHumidityPerDay = GetHumidityForSelectedDay(dayList[i], sensorData);
+
+                avgHumidityPerMonth[0] += (avgHumidityPerDay[0]);
+                avgHumidityPerMonth[1] += (avgHumidityPerDay[1]);
+            }
+            avgHumidityPerMonth[0] = avgHumidityPerMonth[0] / dayList.Count;
+            avgHumidityPerMonth[1] = avgHumidityPerMonth[1] / dayList.Count;
+            return avgHumidityPerMonth;
+        }
+
+        internal static List<string> GetHumidityForAllMonths(List<SensorDataTime> sensorData)
+        {
+            List<string> avgHumidityPerMonthList = new();
+            for (var i = 6; i <= 12; i++)
+            {
+                List<double> avgHumidityPerMonth = GetHumidityForSelectedMonth(new DateTime(2016, i, 1), sensorData);
+                avgHumidityPerMonthList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i).PadRight(10) + ":   Inside: " + avgHumidityPerMonth[0].ToString("0") + " %   Outside: " + avgHumidityPerMonth[1].ToString("0") + " %");
+            }
+            return avgHumidityPerMonthList;
         }
 
         internal static List<string> FormatDates(List<DateTime> dates)
         {
             List<string> formattedDates = new();
             for (int i = 0; i < dates.Count; i++)
-            {
                 formattedDates.Add(dates[i].DayOfWeek.ToString().PadRight(10) + ": " + dates[i].ToString("yyyy/MM/dd"));
-            }
             return formattedDates;
         }
 
-
-        internal static List<SensorDataTime> GetSelectedDateWithRegex(string pattern, List<SensorDataTime> sensorData)
+        private static List<double> GetDivideDataTempPerLocation(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
         {
-           return RegexHelper.GetMatchValue(pattern, sensorData);
-           
-        }
-
-        internal static List<double> GetDivideDataTempPerLocation(List<SensorDataTime> sensorData)
-        {
-            List<SensorDataTime> insideData = new();
-            List<SensorDataTime> outsideData = new();
-            foreach (SensorDataTime data in sensorData)
-            {
-                if (data.Location == ("Inside"))
-
-                    insideData.Add(data);
-
-                else
-                    outsideData.Add(data);
-            }
             return GetAverageTemperature(insideData, outsideData);
         }
 
-        internal static List<double> GetDivideDataHumidityPerLocation(List<SensorDataTime> sensorData)
+        private static List<double> GetDivideDataHumidityPerLocation(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
         {
-            List<SensorDataTime> insideData = new();
-            List<SensorDataTime> outsideData = new();
-            foreach (SensorDataTime data in sensorData)
-            {
-                if (data.Location == ("Inside"))
-
-                    insideData.Add(data);
-
-                else
-                    outsideData.Add(data);
-            }
             return GetAverageHumidity(insideData, outsideData);
         }
 
-        internal static List<double> GetAverageTemperature(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
+        private static List<double> GetAverageTemperature(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
         {
-            
-            List<double> temps = new();
-            temps.Add(GetAverageTemperatureFromModel(18, 30, insideData));
-            temps.Add(GetAverageTemperatureFromModel(-30, 36, outsideData));
+
+            List<double> temps = new()
+            {
+                GetAverageTemperatureFromModel(18, 30, insideData),
+                GetAverageTemperatureFromModel(-30, 36, outsideData)
+            };
             return temps;
         }
 
-        internal static List<double> GetAverageHumidity(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
+        private static List<double> GetAverageHumidity(List<SensorDataTime> insideData, List<SensorDataTime> outsideData)
         {
 
-            List<double> temps = new();
-            temps.Add(GetAverageHumidityFromModel(0, 100, insideData));
-            temps.Add(GetAverageHumidityFromModel(0, 100, outsideData));
+            List<double> temps = new()
+            {
+                GetAverageHumidityFromModel(0, 100, insideData),
+                GetAverageHumidityFromModel(0, 100, outsideData)
+            };
             return temps;
         }
 
-        internal static double GetAverageTemperatureFromModel(double minTemp, double maxTemp, List<SensorDataTime> listData)
+        private static double GetAverageTemperatureFromModel(double minTemp, double maxTemp, List<SensorDataTime> listData)
         {
             double temp = 0.0;
             foreach (SensorDataTime data in listData)
@@ -114,41 +160,28 @@ namespace WeatherData
             return temp / (double)listData.Count;
         }
 
-        internal static double GetAverageHumidityFromModel(double minHumidity, double maxHumidity, List<SensorDataTime> listData)
+        private static double GetAverageHumidityFromModel(double minHumidity, double maxHumidity, List<SensorDataTime> listData)
         {
             double humidity = 0.0;
             foreach (SensorDataTime data in listData)
             {
-
                 double temporaryHumidity = double.Parse(data.Humidity, System.Globalization.CultureInfo.InvariantCulture);
                 if (temporaryHumidity > minHumidity && temporaryHumidity < maxHumidity)
                     humidity += temporaryHumidity;
-
             }
             return humidity / (double)listData.Count;
-        }
-
-        internal static string ReturnFormattedDate(string date)
-        {
-            if (date.Length == 1) return "0" + date;
-            return date;
         }
 
         internal static List<DateTime> GetDatesPerMonthFromSensorData(int month, List<SensorDataTime> sensorData, int year = 2016)
         {
             List<DateTime> dates = new();
             foreach (var data in sensorData.Select(x => x.Date).Distinct())
-            {
                 if (data.Date.Year == year && data.Date.Month == month)
-                {
-                    //data.Date.Day
                     dates.Add(data.Date);
-                }
-            }
             return dates;
         }
 
-        internal static List<SensorDataTime> GetSelectedDateData(DateTime dateDay, List<SensorDataTime> sensorData)
+        private static List<SensorDataTime> GetSelectedDateData(DateTime dateDay, List<SensorDataTime> sensorData)
         {
             List<SensorDataTime> matches = new();
             foreach (var data in sensorData)
@@ -157,25 +190,14 @@ namespace WeatherData
             return matches;
         }
 
-        internal static List<SensorDataTime> GetSelectedDivideDataTemp(List<SensorDataTime> sensorData, string selectedLocation)
-        {
-            List<SensorDataTime> locationData = new();
-            foreach (SensorDataTime data in sensorData)
-                if (data.Location == selectedLocation)
-                    locationData.Add(data);
-            return locationData;
-        }
-
         internal static List<double> GetTemperatureForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> matches = Helpers.GetSelectedDateData(dateDay, sensorData);
-            return Helpers.GetDivideDataTempPerLocation(matches);
+            return GetDivideDataTempPerLocation(DivideDataPerLocation(GetSelectedDateData(dateDay, sensorData), "Inside"), DivideDataPerLocation(GetSelectedDateData(dateDay, sensorData), "Outside"));
         }
 
-        internal static List<double> GetHumidityForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
+        private static List<double> GetHumidityForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> matches = Helpers.GetSelectedDateData(dateDay, sensorData);
-            return Helpers.GetDivideDataHumidityPerLocation(matches);
+            return GetDivideDataHumidityPerLocation(DivideDataPerLocation(GetSelectedDateData(dateDay, sensorData), "Inside"), DivideDataPerLocation(GetSelectedDateData(dateDay, sensorData), "Outside"));
         }
 
         internal static List<DateTime> GetMeteorological(List<SensorDataTime> sensorData, int minValue)
@@ -235,27 +257,26 @@ namespace WeatherData
 
         internal static List<string> ConvertMeteoroligicalToStringList(List<DateTime> dateTimes)
         {
-            List<string> result = new List<string>();
-            result.Add("Meteorologist Autumn Date: " + dateTimes[0].ToString("yyyy.MM.dd"));
-            result.Add("Meteorologist Winter Date: " + dateTimes[1].ToString("yyyy.MM.dd"));
+            List<string> result = new()
+            {
+                "Meteorologist Autumn Date: " + dateTimes[0].ToString("yyyy.MM.dd"),
+                "Meteorologist Winter Date: " + dateTimes[1].ToString("yyyy.MM.dd")
+            };
             return result;
         }
 
-        internal static List<SensorDataTime> GetUnitForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
+        private static List<SensorDataTime> GetUnitForSelectedMonth(DateTime date, List<SensorDataTime> sensorData)
         {
-            List<DateTime> dayList = Helpers.GetDatesPerMonthFromSensorData(date.Month, sensorData);
+            List<DateTime> dayList = GetDatesPerMonthFromSensorData(date.Month, sensorData);
             List<SensorDataTime> unitAvgPerDay = new();
-
             for (int i = 0; i < dayList.Count; i++)
-            {
                 unitAvgPerDay.Add(GetUnitAvgForSelectedDay(dayList[i], sensorData));
-            }
             return unitAvgPerDay;
         }
 
         private static SensorDataTime GetUnitAvgForSelectedDay(DateTime dateDay, List<SensorDataTime> sensorData)
         {
-            List<SensorDataTime> matches = Helpers.GetSelectedDateData(dateDay, sensorData);
+            List<SensorDataTime> matches = GetSelectedDateData(dateDay, sensorData);
 
             double temperature = 0.0;
             double humidity = 0.0;
@@ -272,11 +293,11 @@ namespace WeatherData
                     humidity += temporaryHumidity;
 
             }
-            temperature = temperature / (double)matches.Count;
-            humidity = humidity / (double)matches.Count;
-            moldRisk = moldRisk / (double)matches.Count;
+            temperature /= (double)matches.Count;
+            humidity /= (double)matches.Count;
+            moldRisk /= (double)matches.Count;
 
-            SensorDataTime dataDay = new SensorDataTime
+            SensorDataTime dataDay = new()
             {
                 Date = dateDay,
                 Temp = temperature.ToString("0.00"),
@@ -291,57 +312,50 @@ namespace WeatherData
         internal static List<SensorDataTime> DivideDataPerLocation(List<SensorDataTime> sensorData, string location)
         {
             List<SensorDataTime> locationData = new();
-
             foreach (SensorDataTime data in sensorData)
                 if (data.Location == (location))
                     locationData.Add(data);
-
             return locationData;
         }
 
         internal static List<SensorDataTime> GetSortedListPerTemp(List<SensorDataTime> dataAvgPerDay)
         {
-            var names = dataAvgPerDay
+            return dataAvgPerDay
                 .OrderByDescending(g => double.Parse(g.Temp, System.Globalization.CultureInfo.InvariantCulture))
                 .Select(g => g).Take(5).ToList();
-            return names;
         }
 
         internal static List<SensorDataTime> GetSortedListPerTempReverse(List<SensorDataTime> dataAvgPerDay)
         {
-            var names = dataAvgPerDay
+            return dataAvgPerDay
                 .OrderBy(g => double.Parse(g.Temp, System.Globalization.CultureInfo.InvariantCulture))
                 .Select(g => g).Take(5).ToList();
-            return names;
         }
 
         internal static List<SensorDataTime> GetSortedListPerHumidity(List<SensorDataTime> dataAvgPerDay)
         {
-            var names = dataAvgPerDay
+            return dataAvgPerDay
                 .OrderByDescending(g => double.Parse(g.Humidity, System.Globalization.CultureInfo.InvariantCulture))
                 .Select(g => g).Take(5).ToList();
-            return names;
         }
 
         internal static List<SensorDataTime> GetSortedListPerHumidityReverse(List<SensorDataTime> dataAvgPerDay)
         {
-            var names = dataAvgPerDay
+            return dataAvgPerDay
                 .OrderBy(g => double.Parse(g.Humidity, System.Globalization.CultureInfo.InvariantCulture))
                 .Select(g => g).Take(5).ToList();
-            return names;
         }
 
         internal static List<SensorDataTime> GetSortedListPerMold(List<SensorDataTime> dataAvgPerDay)
         {
-            var names = dataAvgPerDay
+            return dataAvgPerDay
                 .OrderByDescending(g => double.Parse(g.MoldRisk, System.Globalization.CultureInfo.InvariantCulture))
                 .Select(g => g).ToList();
-            return names;
         }
 
         internal static List<string> ConvertModelListToStringListWithMolding(List<SensorDataTime> modelList)
         {
-            List<string> unitList = new List<string>();
+            List<string> unitList = new();
             for (int i = 0; i < modelList.Count; i++)
                 unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
             return unitList;
@@ -349,7 +363,7 @@ namespace WeatherData
 
         internal static List<string> ConvertModelListToStringList(List<SensorDataTime> modelList)
         {
-            List<string> unitList = new List<string>();
+            List<string> unitList = new();
             for (int i = 0; i < modelList.Count; i++)
                 unitList.Add(modelList[i].Date.ToString("dd-MMMM-yyyy").PadRight(20) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %");
             return unitList;
@@ -357,7 +371,7 @@ namespace WeatherData
 
         internal static List<string> ConvertModelListToStringListWithMoldingPerYear(List<SensorDataTime> modelList)
         {
-            List<string> unitList = new List<string>();
+            List<string> unitList = new();
             for (int i = 0; i < modelList.Count; i++)
                 unitList.Add(DateTimeFormatInfo.CurrentInfo.GetMonthName(i+6).PadRight(10) + modelList[i].Location.PadRight(10) + "Temperature: " + modelList[i].Temp.PadRight(9) + "Humidity: " + modelList[i].Humidity.PadRight(2) + " %   Mold Risk: " + modelList[i].MoldRisk + " %");
             return unitList;

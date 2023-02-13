@@ -31,6 +31,7 @@ namespace WeatherData.Data
             Console.Clear();
             return ReadDataFromTextFile(files[index]);
         }
+
         public static List<string> GetSensorData()
         {
             return ReadDataFromTextFile(AppDomain.CurrentDomain.BaseDirectory + "SensorData\\sensorData.txt");

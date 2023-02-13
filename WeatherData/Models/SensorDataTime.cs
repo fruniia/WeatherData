@@ -29,14 +29,12 @@ namespace WeatherData.Models
                 {
                     if (match.Success)
                     {
-
                         sensorDataTime.Add(new SensorDataTime
                         {
                             Date = DateTime.ParseExact(match.Groups["Date"].Value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
                             Temp = match.Groups["Temp"].Value,
                             Humidity = match.Groups["Humidity"].Value,
                             Location = (match.Groups["Location"].Value == "Inne") ? "Inside" : "Outside"
-
                         }); ;
                     }
                 }

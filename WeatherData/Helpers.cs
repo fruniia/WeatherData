@@ -218,7 +218,7 @@ namespace WeatherData
                     {
                         if (doubles.Average() <= minValue)
                         {
-                            meteroDays.Add(outsideDataDate[counting]);
+                            meteroDays.Add(outsideDataDate[counting - 5]);
                             meteroDays.Add(outsideDataDate[counting]);
                         }
                     }
